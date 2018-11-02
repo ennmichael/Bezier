@@ -7,7 +7,5 @@ namespace Bezier
         IList<Vector2> Weights { get; }
 
         Vector2 Point(float t);
-
-        IEnumerable<Line> WeightLines { get; }
     }
 }

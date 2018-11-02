@@ -12,7 +12,7 @@ namespace Bezier
                 new Vector2(20.0f, 200.0f),
                 new Vector2(100.0f, 100.0f));
             BezierDrawing.DrawWeights(canvas, bezierCurve);
-            BezierDrawing.Draw(canvas, bezierCurve, 0.1f);
+            BezierDrawing.Draw(canvas, bezierCurve, 0.02f);
         }
     }
 }

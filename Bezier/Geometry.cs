@@ -7,16 +7,12 @@
         public Vector2 To { get; }
 
         public Line(Vector2 from, Vector2 to) => (From, To) = (from, to);
-
-        public (Line First, Line Second) Ratio(float t)
-        {
-            Vector2 a = From + (To - From) * t;
-            return (new Line(From, a), new Line(a, To));
-        }
     }
 
     struct Vector2
     {
+        public static Vector2 Interpolate(Vector2 from, Vector2 to, float t) => from + (to - from) * t;
+
         public static readonly Vector2 Up = new Vector2(0, 1);
 
         public static readonly Vector2 Down = new Vector2(0, -1);

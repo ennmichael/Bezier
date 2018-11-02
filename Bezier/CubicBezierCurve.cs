@@ -19,9 +19,23 @@ namespace Bezier
             Weights = weights;
         }
 
-        public Vector2 Point(float t)
+        public Vector2 Point(float t) => DeCasteljau(t);
+
+        public Vector2 DeCasteljau(float t)
         {
-            if (t < 0.0f || t > 1.0f)
+            if (!CheckT(t))
+                throw new ArgumentOutOfRangeException();
+            Vector2 p1 = Vector2.Interpolate(Weights[0], Weights[1], t);
+            Vector2 p2 = Vector2.Interpolate(Weights[1], Weights[2], t);
+            Vector2 p3 = Vector2.Interpolate(Weights[2], Weights[3], t);
+            Vector2 q1 = Vector2.Interpolate(p1, p2, t);
+            Vector2 q2 = Vector2.Interpolate(p2, p3, t);
+            return Vector2.Interpolate(q1, q2, t);
+        }
+
+        public Vector2 Bernstein(float t)
+        {
+            if (!CheckT(t))
                 throw new ArgumentOutOfRangeException();
             float u = (1 - t);
             float t2 = t * t;
@@ -33,14 +47,6 @@ namespace Bezier
             return m0 * Weights[0] + m1 * Weights[1] + m2 * Weights[2] + m3 * Weights[3];
         }
 
-        public IEnumerable<Line> WeightLines
-        {
-            get
-            {
-                yield return new Line(Weights[0], Weights[1]);
-                yield return new Line(Weights[1], Weights[2]);
-                yield return new Line(Weights[2], Weights[3]);
-            }
-        }
+        private bool CheckT(float t) => t >= 0.0f && t <= 1.0f;
     }
 }
