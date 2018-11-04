@@ -1,5 +1,21 @@
-﻿namespace Bezier
+﻿using System.Collections.Generic;
+
+namespace Bezier
 {
+    class DistanceComparer : IComparer<Vector2>
+    {
+        private readonly Vector2 origin;
+
+        public DistanceComparer(Vector2 origin) => this.origin = origin;
+
+        public int Compare(Vector2 a, Vector2 b)
+        {
+            var d1 = (a - origin).SqrMagnitude;
+            var d2 = (b - origin).SqrMagnitude;
+            return d1.CompareTo(d2);
+        }
+    }
+
     struct Line
     {
         public Vector2 From { get; }
@@ -38,6 +54,8 @@
             else
                 return false;
         }
+
+        public override string ToString() => $"({X}, {Y})";
 
         public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode();
 

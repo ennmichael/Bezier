@@ -7,9 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Canvas x:Name="MainCanvas" HorizontalAlignment="Left" Height="307" Margin="40,88,0,0" VerticalAlignment="Top" Width="716"/>
-        <ComboBox x:Name="ExampleSelection" HorizontalAlignment="Left" Margin="40,37,0,0" VerticalAlignment="Top" Width="184" SelectionChanged="ComboBox_SelectionChanged">
-            <ComboBoxItem Content="Rough Draw Example" IsSelected="True"/>
-        </ComboBox>
+        <Canvas x:Name="MainCanvas" Background="Transparent" HorizontalAlignment="Left" Height="307" Margin="40,88,0,0" VerticalAlignment="Top" Width="716" MouseMove="MainCanvas_MouseMove"/>
+        <Slider x:Name="StepSlider" HorizontalAlignment="Left" Margin="40,43,0,0" VerticalAlignment="Top" Height="21" Width="160" Maximum="40" LargeChange="9" Minimum="3" ValueChanged="Slider_ValueChanged" IsTabStop="False" IsSelectionRangeEnabled="True" Value="30" SmallChange="5"/>
     </Grid>
 </Window>

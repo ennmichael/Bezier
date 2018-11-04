@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Media;
 
 // TODO Benchmark how much faster it is to draw lines via deCasteljau's
@@ -8,6 +7,16 @@ namespace Bezier
 {
     static class BezierDrawing
     {
+        public static int WeightIndicatorDiameter = 6;
+
+        public static void Clear(Canvas canvas) => canvas.Children.Clear();
+
+        public static void DrawEverything(Canvas canvas, IBezierCurve bezierCurve, int steps)
+        {
+            DrawWeights(canvas, bezierCurve);
+            DrawCurve(canvas, bezierCurve, steps);
+        }
+
         public static void DrawWeights(Canvas canvas, IBezierCurve bezierCurve)
         {
             foreach (var weight in bezierCurve.Weights)
@@ -18,8 +27,8 @@ namespace Bezier
         {
             var ellipse = new System.Windows.Shapes.Ellipse
             {
-                Width = 6,
-                Height = 6,
+                Width = WeightIndicatorDiameter,
+                Height = WeightIndicatorDiameter,
                 Stroke = Brushes.Aqua,
                 StrokeThickness = 2
             };
@@ -28,10 +37,11 @@ namespace Bezier
             canvas.Children.Add(ellipse);
         }
 
-        public static void Draw(Canvas canvas, IBezierCurve bezierCurve, float step)
+        public static void DrawCurve(Canvas canvas, IBezierCurve bezierCurve, int steps)
         {
+            float delta = 1.0f / steps;
             Vector2 previousPoint = bezierCurve.Point(0.0f);
-            for (float t = step; t < 1.0f; t += step)
+            for (float t = delta; t < 1.0f; t += delta)
             {
                 var point = bezierCurve.Point(t);
                 DrawLine(canvas, previousPoint, point);
