@@ -46,11 +46,11 @@ namespace Bezier
         }
     }
 
-    class SquareBezierCurve : IBezierCurve
+    class QuadraticBezierCurve : IBezierCurve
     {
         public IList<Vector2> Weights { get; }
 
-        public SquareBezierCurve(Vector2 w0, Vector2 w1, Vector2 w2) =>
+        public QuadraticBezierCurve(Vector2 w0, Vector2 w1, Vector2 w2) =>
             Weights = new List<Vector2> { w0, w1, w2 };
 
         public Vector2 Point(float t)

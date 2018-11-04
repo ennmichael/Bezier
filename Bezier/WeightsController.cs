@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace Bezier
@@ -14,15 +13,10 @@ namespace Bezier
 
         public WeightsController(IBezierCurve bezierCurve) => this.bezierCurve = bezierCurve;
 
-        public void MouseUp()
-        {
-            Debug.WriteLine($"MouseUp");
-            selectedWeightIndex = noIndex;
-        }
+        public void MouseUp() => selectedWeightIndex = noIndex;
 
         public bool MouseDown(Vector2 position)
         {
-            Debug.WriteLine($"MouseMove {selectedWeightIndex} {position}");
             if (selectedWeightIndex == noIndex)
             {
                 selectedWeightIndex = SelectWeight(position);

@@ -25,6 +25,13 @@ namespace Bezier
         public Line(Vector2 from, Vector2 to) => (From, To) = (from, to);
     }
 
+    interface IReadableVector2
+    {
+        float X { get; }
+
+        float Y { get; }
+    }
+
     struct Vector2
     {
         public static Vector2 Interpolate(Vector2 from, Vector2 to, float t) => from + (to - from) * t;

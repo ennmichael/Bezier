@@ -15,9 +15,9 @@ namespace Bezier
                 yield return t1;
         }
 
-        public static IEnumerable<float> Find(SquareBezierCurve a, LinearBezierCurve b) => Find(b, a);
+        public static IEnumerable<float> Find(QuadraticBezierCurve a, LinearBezierCurve b) => Find(b, a);
 
-        public static IEnumerable<float> Find(LinearBezierCurve a, SquareBezierCurve b)
+        public static IEnumerable<float> Find(LinearBezierCurve a, QuadraticBezierCurve b)
         {
             Vector2 u = 2 * b.Weights[1];
             Vector2 wa = -(b.Weights[0] + u + b.Weights[2]);
@@ -26,7 +26,7 @@ namespace Bezier
             return QuadraticSolutions(wa, wb, wc);
         }
 
-        public static IEnumerable<float> Find(SquareBezierCurve a, SquareBezierCurve b)
+        public static IEnumerable<float> Find(QuadraticBezierCurve a, QuadraticBezierCurve b)
         {
             Vector2 ua = 2 * a.Weights[1];
             Vector2 ub = 2 * b.Weights[1];

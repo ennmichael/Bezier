@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28010.2048
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bezier", "Bezier\Bezier.csproj", "{967F7BAE-28DC-4E56-A63F-7494477FAEF8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{C6EB0329-B83C-4266-AA68-732661A7E91D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{967F7BAE-28DC-4E56-A63F-7494477FAEF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{967F7BAE-28DC-4E56-A63F-7494477FAEF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{967F7BAE-28DC-4E56-A63F-7494477FAEF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6EB0329-B83C-4266-AA68-732661A7E91D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6EB0329-B83C-4266-AA68-732661A7E91D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6EB0329-B83C-4266-AA68-732661A7E91D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6EB0329-B83C-4266-AA68-732661A7E91D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

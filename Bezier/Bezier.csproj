@@ -58,7 +58,7 @@
     </ApplicationDefinition>
     <Compile Include="BezierHelper.cs" />
     <Compile Include="Equation.cs" />
-    <Compile Include="Intersection.cs" />
+    <Compile Include="Intersections.cs" />
     <Compile Include="PointExtensions.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="WeightsController.cs" />
