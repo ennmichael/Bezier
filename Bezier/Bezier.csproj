@@ -56,10 +56,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BezierHelper.cs" />
+    <Compile Include="BoundingBox.cs" />
     <Compile Include="Equation.cs" />
     <Compile Include="Intersections.cs" />
-    <Compile Include="PointExtensions.cs" />
+    <Compile Include="Conversions.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="WeightsController.cs" />
     <Page Include="MainWindow.xaml">
@@ -70,8 +70,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="BezierDrawing.cs" />
-    <Compile Include="BezierCurves.cs" />
+    <Compile Include="Drawing.cs" />
+    <Compile Include="Curves.cs" />
     <Compile Include="Geometry.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

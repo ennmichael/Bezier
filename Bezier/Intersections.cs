@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace Bezier
 {
-    static class Intersections
+    static class Intersections // Garbage which doesn't work
     {
-        public static IEnumerable<float> Find(LinearBezierCurve a, LinearBezierCurve b)
+        public static IEnumerable<float> Find(LinearCurve a, LinearCurve b)
         {
             Vector2 numerator = a.Weights[0] - b.Weights[0];
             Vector2 denominator = numerator + a.Weights[1] - b.Weights[1];
@@ -15,9 +15,9 @@ namespace Bezier
                 yield return t1;
         }
 
-        public static IEnumerable<float> Find(QuadraticBezierCurve a, LinearBezierCurve b) => Find(b, a);
+        public static IEnumerable<float> Find(QuadraticCurve a, LinearCurve b) => Find(b, a);
 
-        public static IEnumerable<float> Find(LinearBezierCurve a, QuadraticBezierCurve b)
+        public static IEnumerable<float> Find(LinearCurve a, QuadraticCurve b)
         {
             Vector2 u = 2 * b.Weights[1];
             Vector2 wa = -(b.Weights[0] + u + b.Weights[2]);
@@ -26,7 +26,7 @@ namespace Bezier
             return QuadraticSolutions(wa, wb, wc);
         }
 
-        public static IEnumerable<float> Find(QuadraticBezierCurve a, QuadraticBezierCurve b)
+        public static IEnumerable<float> Find(QuadraticCurve a, QuadraticCurve b)
         {
             Vector2 ua = 2 * a.Weights[1];
             Vector2 ub = 2 * b.Weights[1];
@@ -46,6 +46,6 @@ namespace Bezier
                    select solution.T1;
         }
 
-        private static bool SolutionIsCorrect(float t1, float t2) => t1 == t2 && BezierHelper.CheckT(t1);
+        private static bool SolutionIsCorrect(float t1, float t2) => t1 == t2 && Utils.CheckT(t1);
     }
 }

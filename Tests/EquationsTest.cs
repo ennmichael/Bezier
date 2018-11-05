@@ -1,20 +1,9 @@
 ﻿using Bezier;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Tests
 {
-    class ApproximateEqualityComparer : IEqualityComparer<float>
-    {
-        public static readonly float Epsilon = 0.0001f;
-
-        public bool Equals(float x, float y) => Math.Abs(x - y) <= Epsilon;
-
-        public int GetHashCode(float obj) => obj.GetHashCode();
-    }
-
     [TestClass]
     public class EquationsTest
     {

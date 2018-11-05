@@ -25,11 +25,19 @@ namespace Bezier
         public Line(Vector2 from, Vector2 to) => (From, To) = (from, to);
     }
 
-    interface IReadableVector2
+    struct Rectangle
     {
-        float X { get; }
+        public Vector2 LowerLeft { get; }
 
-        float Y { get; }
+        public Vector2 UpperRight { get; }
+
+        public Vector2 UpperLeft => new Vector2(UpperRight.X - Width, UpperRight.Y);
+
+        public float Width => UpperRight.X - LowerLeft.X;
+
+        public float Height => LowerLeft.Y - UpperRight.Y;
+
+        public Rectangle(Vector2 lowerLeft, Vector2 upperRight) => (LowerLeft, UpperRight) = (lowerLeft, upperRight);
     }
 
     struct Vector2

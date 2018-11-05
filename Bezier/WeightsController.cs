@@ -8,10 +8,10 @@ namespace Bezier
     {
         private static readonly int noIndex = -1;
 
-        private readonly IBezierCurve bezierCurve;
+        private readonly ICurve curve;
         private int selectedWeightIndex = noIndex;
 
-        public WeightsController(IBezierCurve bezierCurve) => this.bezierCurve = bezierCurve;
+        public WeightsController(ICurve curve) => this.curve = curve;
 
         public void MouseUp() => selectedWeightIndex = noIndex;
 
@@ -31,7 +31,7 @@ namespace Bezier
 
         private int SelectWeight(Vector2 position)
         {
-            float minimumDistance = BezierDrawing.WeightIndicatorDiameter * 2;
+            float minimumDistance = Drawing.WeightIndicatorDiameter * 2;
             var sqrDistances = SqrDistances(position, minimumDistance);
             try
             {
@@ -44,12 +44,12 @@ namespace Bezier
         }
 
         private IEnumerable<(int Index, float Distance)> SqrDistances(Vector2 fromPosition, float minimumDistance) =>
-            from item in Utils.ValuesAndIndices(bezierCurve.Weights)
+            from item in Utils.ValuesAndIndices(curve.Weights)
             let sqrDistance = Vector2.SqrDistance(item.Value, fromPosition)
             let sqrMinimumDistance = minimumDistance * minimumDistance
             where sqrDistance <= sqrMinimumDistance
             select (item.Index, sqrDistance);
 
-        private void MoveSelectedWeight(Vector2 position) => bezierCurve.Weights[selectedWeightIndex] = position;
+        private void MoveSelectedWeight(Vector2 position) => curve.Weights[selectedWeightIndex] = position;
     }
 }

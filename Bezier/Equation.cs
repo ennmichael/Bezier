@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Bezier
 {
@@ -107,6 +108,18 @@ namespace Bezier
             if (a == 0)
                 return null;
             return -b / a;
+        }
+
+        public static IEnumerable<float> SolveCubicForT(float a, float b, float c, float d) => SolveCubic(a, b, c, d).Where(Utils.CheckT);
+
+        public static IEnumerable<float> SolveQuadraticForT(float a, float b, float c) => SolveQuadratic(a, b, c).Where(Utils.CheckT);
+
+        public static float? SolveLinearForT(float a, float b)
+        {
+            var result = SolveLinear(a, b);
+            if (result.HasValue && Utils.CheckT(result.Value))
+                return result.Value;
+            return null;
         }
     }
 }

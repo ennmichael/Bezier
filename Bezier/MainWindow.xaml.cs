@@ -8,37 +8,37 @@ namespace Bezier
     public partial class MainWindow : Window
     {
         private int steps = 0;
-        private readonly CubicBezierCurve cubicBezierCurve;
-        private readonly QuadraticBezierCurve quadraticBezierCurve;
-        private readonly LinearBezierCurve linearBezierCurve;
+        private readonly CubicCurve cubicCurve;
+        private readonly QuadraticCurve quadraticCurve;
+        private readonly LinearCurve linearCurve;
         private readonly WeightsController[] weightsControllers;
 
-        private IEnumerable<IBezierCurve> BezierCurves
+        private IEnumerable<ICurve> Curves
         {
             get
             {
-                yield return cubicBezierCurve;
-                yield return quadraticBezierCurve;
-                yield return linearBezierCurve;
+                yield return cubicCurve;
+                yield return quadraticCurve;
+                yield return linearCurve;
             }
         }
 
         public MainWindow()
         {
             InitializeComponent();
-            cubicBezierCurve = new CubicBezierCurve(
+            cubicCurve = new CubicCurve(
                 new Vector2(10.0f, 10.0f),
                 new Vector2(20.0f, 80.0f),
                 new Vector2(20.0f, 200.0f),
                 new Vector2(100.0f, 100.0f));
-            quadraticBezierCurve = new QuadraticBezierCurve(
+            quadraticCurve = new QuadraticCurve(
                 new Vector2(150.0f, 150.0f),
-                new Vector2(200.0f, 250.0f),
-                new Vector2(250.0f, 250.0f));
-            linearBezierCurve = new LinearBezierCurve(
+                new Vector2(100.0f, 300.0f),
+                new Vector2(350.0f, 150.0f));
+            linearCurve = new LinearCurve(
                 new Vector2(500.0f, 200.0f),
                 new Vector2(310.0f, 260.0f));
-            weightsControllers = BezierCurves
+            weightsControllers = Curves
                 .Select(c => new WeightsController(c))
                 .ToArray();
             RedrawCanvas();
@@ -46,15 +46,15 @@ namespace Bezier
 
         private void RedrawCanvas()
         {
-            BezierDrawing.Clear(MainCanvas);
-            DrawBezierCurves();
+            Drawing.Clear(MainCanvas);
+            Drawcurves();
             DrawIntersections();
         }
 
-        private void DrawBezierCurves()
+        private void Drawcurves()
         {
-            foreach (var bezierCurve in BezierCurves)
-                BezierDrawing.DrawEverything(MainCanvas, bezierCurve, steps);
+            foreach (var curve in Curves)
+                Drawing.DrawEverything(MainCanvas, curve, steps);
         }
 
         private void DrawIntersections()
