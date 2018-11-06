@@ -8,52 +8,47 @@ namespace Bezier
     public partial class MainWindow : Window
     {
         private int steps = 0;
-        private readonly CubicCurve cubicCurve;
-        private readonly QuadraticCurve quadraticCurve;
-        private readonly LinearCurve linearCurve;
+        private readonly ICurve[] curves;
         private readonly WeightsController[] weightsControllers;
-
-        private IEnumerable<ICurve> Curves
-        {
-            get
-            {
-                yield return cubicCurve;
-                yield return quadraticCurve;
-                yield return linearCurve;
-            }
-        }
 
         public MainWindow()
         {
             InitializeComponent();
-            cubicCurve = new CubicCurve(
-                new Vector2(10.0f, 10.0f),
-                new Vector2(20.0f, 80.0f),
-                new Vector2(20.0f, 200.0f),
-                new Vector2(100.0f, 100.0f));
-            quadraticCurve = new QuadraticCurve(
-                new Vector2(150.0f, 150.0f),
-                new Vector2(100.0f, 300.0f),
-                new Vector2(350.0f, 150.0f));
-            linearCurve = new LinearCurve(
-                new Vector2(500.0f, 200.0f),
-                new Vector2(310.0f, 260.0f));
-            weightsControllers = Curves
-                .Select(c => new WeightsController(c))
-                .ToArray();
+            curves = new ICurve[]
+            {
+                new QuarticCurve(
+                    new Vector2(600.0f, 350.0f),
+                    new Vector2(700.0f, 450.0f),
+                    new Vector2(500.0f, 550.0f),
+                    new Vector2(550.0f, 400.0f),
+                    new Vector2(420.0f, 450.0f)),
+                new CubicCurve(
+                    new Vector2(110.0f, 410.0f),
+                    new Vector2(120.0f, 480.0f),
+                    new Vector2(120.0f, 600.0f),
+                    new Vector2(200.0f, 500.0f)),
+                new QuadraticCurve(
+                    new Vector2(150.0f, 150.0f),
+                    new Vector2(100.0f, 300.0f),
+                    new Vector2(350.0f, 150.0f)),
+                new LinearCurve(
+                    new Vector2(700.0f, 100.0f),
+                    new Vector2(510.0f, 160.0f))
+            };
+            weightsControllers = curves.Select(c => new WeightsController(c)).ToArray();
             RedrawCanvas();
         }
 
         private void RedrawCanvas()
         {
             Drawing.Clear(MainCanvas);
-            Drawcurves();
+            DrawCurves();
             DrawIntersections();
         }
 
-        private void Drawcurves()
+        private void DrawCurves()
         {
-            foreach (var curve in Curves)
+            foreach (var curve in curves)
                 Drawing.DrawEverything(MainCanvas, curve, steps);
         }
 

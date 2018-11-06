@@ -15,6 +15,51 @@ namespace Bezier
         IEnumerable<float> Roots { get; }
     }
 
+    class QuarticCurve : ICurve
+    {
+        public IList<Vector2> Weights { get; }
+
+        public QuarticCurve(Vector2 w0, Vector2 w1, Vector2 w2, Vector2 w3, Vector2 w4) =>
+            Weights = new List<Vector2> { w0, w1, w2, w3, w4 };
+
+        public Vector2 Point(float t) => DeCasteljau(t);
+
+        public Vector2 DeCasteljau(float t)
+        {
+            Vector2 p0 = Vector2.Interpolate(Weights[0], Weights[1], t);
+            Vector2 p1 = Vector2.Interpolate(Weights[1], Weights[2], t);
+            Vector2 p2 = Vector2.Interpolate(Weights[2], Weights[3], t);
+            Vector2 p3 = Vector2.Interpolate(Weights[3], Weights[4], t);
+            Vector2 q0 = Vector2.Interpolate(p0, p1, t);
+            Vector2 q1 = Vector2.Interpolate(p1, p2, t);
+            Vector2 q2 = Vector2.Interpolate(p2, p3, t);
+            Vector2 r0 = Vector2.Interpolate(q0, q1, t);
+            Vector2 r1 = Vector2.Interpolate(q1, q2, t);
+            return Vector2.Interpolate(r0, r1, t);
+        }
+
+        public Vector2 Bernstein(float t)
+        {
+            float t2 = t * t;
+            float t3 = t2 * t;
+            float t4 = t3 * t;
+            float u = 1.0f - t;
+            float u2 = u * u;
+            float u3 = u2 * u;
+            float u4 = u3 * u;
+            return u4 * Weights[0] + 4 * u3 * t * Weights[1] + 6 * u2 * t2 * Weights[2] + 4 * u * t3 * Weights[3] + t4 * Weights[4];
+        }
+
+        ICurve ICurve.Derivative => Derivative;
+
+        public CubicCurve Derivative =>
+            new CubicCurve(
+                4 * (Weights[1] - Weights[0]), 4 * (Weights[2] - Weights[1]),
+                4 * (Weights[3] - Weights[2]), 4 * (Weights[4] - Weights[3]));
+
+        public IEnumerable<float> Roots => throw new NotImplementedException();
+    }
+
     class CubicCurve : ICurve
     {
         public IList<Vector2> Weights { get; }
@@ -26,28 +71,22 @@ namespace Bezier
 
         public Vector2 DeCasteljau(float t)
         {
-            if (!Utils.CheckT(t))
-                throw new ArgumentOutOfRangeException();
-            Vector2 p1 = Vector2.Interpolate(Weights[0], Weights[1], t);
-            Vector2 p2 = Vector2.Interpolate(Weights[1], Weights[2], t);
-            Vector2 p3 = Vector2.Interpolate(Weights[2], Weights[3], t);
+            Vector2 p0 = Vector2.Interpolate(Weights[0], Weights[1], t);
+            Vector2 p1 = Vector2.Interpolate(Weights[1], Weights[2], t);
+            Vector2 p2 = Vector2.Interpolate(Weights[2], Weights[3], t);
+            Vector2 q0 = Vector2.Interpolate(p0, p1, t);
             Vector2 q1 = Vector2.Interpolate(p1, p2, t);
-            Vector2 q2 = Vector2.Interpolate(p2, p3, t);
-            return Vector2.Interpolate(q1, q2, t);
+            return Vector2.Interpolate(q0, q1, t);
         }
 
         public Vector2 Bernstein(float t)
         {
-            if (!Utils.CheckT(t))
-                throw new ArgumentOutOfRangeException();
-            float u = 1 - t;
             float t2 = t * t;
+            float t3 = t2 * t;
+            float u = 1.0f - t;
             float u2 = u * u;
-            float m0 = u2 * u;
-            float m1 = 3 * u2 * t;
-            float m2 = 3 * u * t2;
-            float m3 = t2 * t;
-            return m0 * Weights[0] + m1 * Weights[1] + m2 * Weights[2] + m3 * Weights[3];
+            float u3 = u2 * u;
+            return u3 * Weights[0] + 3 * u2 * t * Weights[1] + 3 * u * t2 * Weights[2] + t3 * Weights[3];
         }
 
         ICurve ICurve.Derivative => Derivative;
@@ -59,10 +98,12 @@ namespace Bezier
         {
             get
             {
-                Vector2 wa = Weights[0] + Weights[1] + Weights[2] + Weights[3];
-                Vector2 wb = -(3 * Weights[0] + 2 * Weights[1] + Weights[2]);
-                Vector2 wc = 3 * Weights[0] + Weights[1];
-                Vector2 wd = -Weights[0];
+                Vector2 w1Tripled = 3 * Weights[1];
+                Vector2 w2Tripled = 3 * Weights[2];
+                Vector2 wa = -Weights[0] + w1Tripled - w2Tripled + Weights[3];
+                Vector2 wb = 3 * Weights[0] - 6 * Weights[1] + w2Tripled;
+                Vector2 wc = -3 * Weights[0] + w1Tripled;
+                Vector2 wd = Weights[0];
                 return Enumerable.Concat(
                     Equation.SolveCubicForT(wa.X, wb.X, wc.X, wd.X),
                     Equation.SolveCubicForT(wa.Y, wb.Y, wc.Y, wd.Y));
@@ -77,9 +118,11 @@ namespace Bezier
         public QuadraticCurve(Vector2 w0, Vector2 w1, Vector2 w2) =>
             Weights = new List<Vector2> { w0, w1, w2 };
 
-        public Vector2 Point(float t)
+        public Vector2 Point(float t) => Bernstein(t);
+
+        private Vector2 Bernstein(float t)
         {
-            float u = 1 - t;
+            float u = 1.0f - t;
             return u * u * Weights[0] + 2 * u * t * Weights[1] + t * t * Weights[2];
         }
 
@@ -91,9 +134,9 @@ namespace Bezier
         {
             get
             {
-                Vector2 w1Double = 2 * Weights[1];
-                Vector2 wa = Weights[0] - w1Double + Weights[2];
-                Vector2 wb = -(2 * Weights[0] - w1Double);
+                Vector2 w1Doubled = 2 * Weights[1];
+                Vector2 wa = Weights[0] - w1Doubled + Weights[2];
+                Vector2 wb = -(2 * Weights[0] - w1Doubled);
                 Vector2 wc = Weights[0];
                 return Enumerable.Concat(
                     Equation.SolveQuadraticForT(wa.X, wb.X, wc.X),
@@ -109,7 +152,9 @@ namespace Bezier
         public LinearCurve(Vector2 w0, Vector2 w1) =>
             Weights = new List<Vector2> { w0, w1 };
 
-        public Vector2 Point(float t) => (1 - t) * Weights[0] + t * Weights[1];
+        public Vector2 Point(float t) => Bernstein(t);
+
+        private Vector2 Bernstein(float t) => (1.0f - t) * Weights[0] + t * Weights[1];
 
         public ICurve Derivative => null;
 
