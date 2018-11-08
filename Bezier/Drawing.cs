@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using System;
+using System.Linq;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 // TODO Benchmark how much faster it is to draw lines via deCasteljau's
@@ -7,16 +9,50 @@ namespace Bezier
 {
     static class Drawing
     {
+        private static readonly Brush skeletonStroke = Brushes.LightGray;
+
+        private static readonly Brush weightsStroke = Brushes.Black;
+
+        private static readonly Brush curveStroke = Brushes.Black;
+
+        private static readonly Brush boundingBoxStroke = Brushes.LightGreen;
+
+        private static readonly Brush extremaStroke = Brushes.Red;
+
         public static int WeightIndicatorDiameter = 6;
 
         public static void Clear(Canvas canvas) => canvas.Children.Clear();
 
         public static void DrawEverything(Canvas canvas, ICurve curve, int steps)
         {
+            DrawSkeleton(canvas, curve);
             DrawBoundingBox(canvas, curve);
-            DrawCurve(canvas, curve, steps, Brushes.Black);
+            DrawCurve(canvas, curve, steps);
+            DrawSplit(canvas, curve, 0.3f, steps);
             DrawWeights(canvas, curve);
             DrawExtrema(canvas, curve);
+        }
+
+        private static void DrawSplit(Canvas canvas, ICurve curve, float z, int steps)
+        {
+            try
+            {
+                (ICurve a, ICurve b) = curve.Split(z);
+                DrawCurve(canvas, a, steps, Brushes.LightPink);
+                DrawCurve(canvas, b, steps, Brushes.Blue);
+            }
+            catch (NotImplementedException)
+            { }
+        }
+
+        private static void DrawSkeleton(Canvas canvas, ICurve curve)
+        {
+            Vector2 previousPoint = curve.Weights.First();
+            foreach (Vector2 currentPoint in curve.Weights.Skip(1))
+            {
+                DrawLine(canvas, previousPoint, currentPoint, skeletonStroke);
+                previousPoint = currentPoint;
+            }
         }
 
         public static void DrawWeights(Canvas canvas, ICurve curve)
@@ -25,7 +61,7 @@ namespace Bezier
                 DrawWeight(canvas, weight);
         }
 
-        private static void DrawWeight(Canvas canvas, Vector2 weight) => DrawPointMarker(canvas, weight, Brushes.Aqua, 2);
+        private static void DrawWeight(Canvas canvas, Vector2 weight) => DrawPointMarker(canvas, weight, weightsStroke, 2);
 
         private static void DrawPointMarker(Canvas canvas, Vector2 point, Brush stroke, int strokeThickness)
         {
@@ -41,8 +77,9 @@ namespace Bezier
             canvas.Children.Add(ellipse);
         }
 
-        public static void DrawCurve(Canvas canvas, ICurve curve, int steps, Brush stroke)
+        public static void DrawCurve(Canvas canvas, ICurve curve, int steps, Brush stroke = null)
         {
+            stroke = stroke ?? curveStroke;
             float delta = 1.0f / steps;
             Vector2 previousPoint = curve.Point(0.0f);
             for (float t = delta; t < 1.0f; t += delta)
@@ -69,7 +106,7 @@ namespace Bezier
         }
 
         public static void DrawBoundingBox(Canvas canvas, ICurve curve) =>
-            DrawRectangle(canvas, curve.BoundingBox(offset: 2.0f), Brushes.LightGreen, 3);
+            DrawRectangle(canvas, curve.BoundingBox(offset: 2.0f), boundingBoxStroke, 3);
 
         private static void DrawRectangle(Canvas canvas, Rectangle rectangle, Brush stroke, int thickness) =>
             canvas.Children.Add(rectangle.ToWindowsRectangle(stroke, thickness));
@@ -77,7 +114,7 @@ namespace Bezier
         public static void DrawExtrema(Canvas canvas, ICurve curve)
         {
             foreach (Vector2 extreme in curve.Extrema())
-                DrawPointMarker(canvas, extreme, Brushes.Red, 3);
+                DrawPointMarker(canvas, extreme, extremaStroke, 3);
         }
     }
 }

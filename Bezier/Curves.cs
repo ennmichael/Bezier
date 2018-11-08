@@ -13,6 +13,8 @@ namespace Bezier
         ICurve Derivative { get; }
 
         IEnumerable<float> Roots { get; }
+
+        (ICurve, ICurve) Split(float z);
     }
 
     class QuarticCurve : ICurve
@@ -48,6 +50,11 @@ namespace Bezier
             float u3 = u2 * u;
             float u4 = u3 * u;
             return u4 * Weights[0] + 4 * u3 * t * Weights[1] + 6 * u2 * t2 * Weights[2] + 4 * u * t3 * Weights[3] + t4 * Weights[4];
+        }
+
+        public (ICurve, ICurve) Split(float z)
+        {
+            throw new NotImplementedException();
         }
 
         ICurve ICurve.Derivative => Derivative;
@@ -89,6 +96,11 @@ namespace Bezier
             return u3 * Weights[0] + 3 * u2 * t * Weights[1] + 3 * u * t2 * Weights[2] + t3 * Weights[3];
         }
 
+        public (ICurve, ICurve) Split(float z)
+        {
+            throw new NotImplementedException();
+        }
+
         ICurve ICurve.Derivative => Derivative;
 
         public QuadraticCurve Derivative =>
@@ -126,6 +138,25 @@ namespace Bezier
             return u * u * Weights[0] + 2 * u * t * Weights[1] + t * t * Weights[2];
         }
 
+        (ICurve, ICurve) ICurve.Split(float z) => Split(z);
+
+        public (QuadraticCurve, QuadraticCurve) Split(float z)
+        {
+            float u = 1 - z;
+            float u2 = u * u;
+            float z2 = z * z;
+            float uzDoubled = 2 * u * z;
+            var a = new QuadraticCurve(
+                Weights[0],
+                u * Weights[0] + z * Weights[1],
+                u2 * Weights[0] + uzDoubled * Weights[1] + z2 * Weights[2]);
+            var b = new QuadraticCurve(
+                u2 * Weights[0] + uzDoubled * Weights[1] + z2 * Weights[2],
+                u * Weights[1] + z * Weights[2],
+                Weights[2]);
+            return (a, b);
+        }
+
         ICurve ICurve.Derivative => Derivative;
 
         public LinearCurve Derivative => new LinearCurve(2 * (Weights[1] - Weights[0]), 2 * (Weights[2] - Weights[1]));
@@ -155,6 +186,11 @@ namespace Bezier
         public Vector2 Point(float t) => Bernstein(t);
 
         private Vector2 Bernstein(float t) => (1.0f - t) * Weights[0] + t * Weights[1];
+
+        public (ICurve, ICurve) Split(float z)
+        {
+            throw new NotImplementedException();
+        }
 
         public ICurve Derivative => null;
 
