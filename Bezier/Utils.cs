@@ -11,9 +11,11 @@ namespace Bezier
         public int GetHashCode(float x) => x.GetHashCode();
     }
 
-    static class Utils
+    public static class Utils
     {
-        public static readonly float Epsilon = 1e-5f;
+        public static readonly float Epsilon = 1e-4f;
+
+        public static readonly float SqrEpsilon = Epsilon * Epsilon;
 
         public static IEnumerable<(T Value, int Index)> ValuesAndIndices<T>(IEnumerable<T> values) =>
             values.Select((v, i) => (v, i));

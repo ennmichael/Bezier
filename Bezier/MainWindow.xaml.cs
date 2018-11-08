@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -43,7 +43,12 @@ namespace Bezier
         {
             Drawing.Clear(MainCanvas);
             DrawCurves();
-            DrawIntersections();
+            try
+            {
+                DrawIntersections();
+            }
+            catch (NotImplementedException)
+            { }
         }
 
         private void DrawCurves()
@@ -54,11 +59,13 @@ namespace Bezier
 
         private void DrawIntersections()
         {
-        }
-
-        IEnumerable<Vector2> FindIntersections()
-        {
-            yield return new Vector2();
+            int i = 1;
+            foreach (var curve in curves)
+            {
+                foreach (var otherCurve in curves.Skip(i))
+                    Drawing.DrawIntersections(MainCanvas, curve, otherCurve);
+                i += 1;
+            }
         }
 
         private Vector2 CanvasMousePosition => Mouse.GetPosition(MainCanvas).ToVector2();

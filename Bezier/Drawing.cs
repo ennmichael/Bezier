@@ -19,9 +19,19 @@ namespace Bezier
 
         private static readonly Brush extremaStroke = Brushes.Red;
 
+        private static readonly Brush intersectionStroke = Brushes.Blue;
+
+        private static readonly int intersectionThickness = 8;
+
         public static int WeightIndicatorDiameter = 6;
 
         public static void Clear(Canvas canvas) => canvas.Children.Clear();
+
+        public static void DrawIntersections(Canvas canvas, ICurve a, ICurve b)
+        {
+            foreach (Vector2 intersection in a.Intersections(b))
+                DrawPointMarker(canvas, intersection, intersectionStroke, intersectionThickness);
+        }
 
         public static void DrawEverything(Canvas canvas, ICurve curve, int steps)
         {

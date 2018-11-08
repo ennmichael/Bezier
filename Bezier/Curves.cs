@@ -187,9 +187,14 @@ namespace Bezier
 
         private Vector2 Bernstein(float t) => (1.0f - t) * Weights[0] + t * Weights[1];
 
-        public (ICurve, ICurve) Split(float z)
+        (ICurve, ICurve) ICurve.Split(float z) => Split(z);
+
+        public (LinearCurve, LinearCurve) Split(float z)
         {
-            throw new NotImplementedException();
+            float u = 1 - z;
+            var a = new LinearCurve(Weights[0], u * Weights[0] + z * Weights[1]);
+            var b = new LinearCurve(u * Weights[0] + z * Weights[1], Weights[1]);
+            return (a, b);
         }
 
         public ICurve Derivative => null;

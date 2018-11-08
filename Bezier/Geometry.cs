@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Bezier
 {
@@ -25,7 +26,7 @@ namespace Bezier
         public Line(Vector2 from, Vector2 to) => (From, To) = (from, to);
     }
 
-    struct Rectangle
+    public struct Rectangle
     {
         public Vector2 LowerLeft { get; }
 
@@ -38,9 +39,13 @@ namespace Bezier
         public float Height => LowerLeft.Y - UpperRight.Y;
 
         public Rectangle(Vector2 lowerLeft, Vector2 upperRight) => (LowerLeft, UpperRight) = (lowerLeft, upperRight);
+
+        public bool Overlaps(Rectangle other) =>
+            LowerLeft.Y >= other.UpperRight.Y && UpperRight.Y <= other.LowerLeft.Y &&
+            UpperRight.X >= other.LowerLeft.X && LowerLeft.X <= other.UpperRight.X;
     }
 
-    struct Vector2
+    public struct Vector2
     {
         public static Vector2 Interpolate(Vector2 from, Vector2 to, float t) => from + (to - from) * t;
 

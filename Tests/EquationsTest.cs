@@ -17,7 +17,7 @@ namespace Tests
             if (expectedSolution.HasValue)
             {
                 Assert.IsTrue(solution.HasValue);
-                Assert.AreEqual(solution.Value, expectedSolution.Value, ApproximateEqualityComparer.Epsilon);
+                Assert.AreEqual(solution.Value, expectedSolution.Value, Utils.Epsilon);
             }
             else
             {

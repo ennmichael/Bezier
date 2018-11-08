@@ -1,51 +1,38 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Bezier
 {
-    static class Intersections // Garbage which doesn't work
+    static class IntersectionsExtension
     {
-        public static IEnumerable<float> Find(LinearCurve a, LinearCurve b)
+        private static readonly float maximumSize = 0.001f;
+
+        // This algorithm can be much faster
+        // It probably yields too many results
+        public static IEnumerable<Vector2> Intersections(this ICurve a, ICurve b)
         {
-            Vector2 numerator = a.Weights[0] - b.Weights[0];
-            Vector2 denominator = numerator + a.Weights[1] - b.Weights[1];
-            float t1 = numerator.X / denominator.X;
-            float t2 = numerator.Y / denominator.Y;
-            if (SolutionIsCorrect(t1, t2))
-                yield return t1;
+            Rectangle aBoundingBox = a.BoundingBox();
+            Rectangle bBoundingBox = b.BoundingBox();
+            if (aBoundingBox.Overlaps(bBoundingBox))
+            {
+                if (aBoundingBox.Width < maximumSize && aBoundingBox.Height < maximumSize &&
+                    bBoundingBox.Width < maximumSize && bBoundingBox.Height < maximumSize)
+                {
+                    yield return aBoundingBox.UpperRight;
+                }
+                else
+                {
+                    var (a1, a2) = a.Split(0.5f);
+                    var (b1, b2) = b.Split(0.5f);
+                    foreach (Vector2 intersection in a1.Intersections(b1))
+                        yield return intersection;
+                    foreach (Vector2 intersection in a1.Intersections(b2))
+                        yield return intersection;
+                    foreach (Vector2 intersection in a2.Intersections(b1))
+                        yield return intersection;
+                    foreach (Vector2 intersection in a2.Intersections(b2))
+                        yield return intersection;
+                }
+            }
         }
-
-        public static IEnumerable<float> Find(QuadraticCurve a, LinearCurve b) => Find(b, a);
-
-        public static IEnumerable<float> Find(LinearCurve a, QuadraticCurve b)
-        {
-            Vector2 u = 2 * b.Weights[1];
-            Vector2 wa = -(b.Weights[0] + u + b.Weights[2]);
-            Vector2 wb = a.Weights[0] + a.Weights[1] + 2 * b.Weights[0] + u;
-            Vector2 wc = -(a.Weights[0] + b.Weights[0]);
-            return QuadraticSolutions(wa, wb, wc);
-        }
-
-        public static IEnumerable<float> Find(QuadraticCurve a, QuadraticCurve b)
-        {
-            Vector2 ua = 2 * a.Weights[1];
-            Vector2 ub = 2 * b.Weights[1];
-            Vector2 wa = a.Weights[0] + ua + a.Weights[2] - b.Weights[0] - ub - b.Weights[2];
-            Vector2 wb = -(2 * a.Weights[0] + ua + 2 * b.Weights[0] + ub);
-            Vector2 wc = a.Weights[0] - b.Weights[0];
-            return QuadraticSolutions(wa, wb, wc);
-        }
-
-        private static IEnumerable<float> QuadraticSolutions(Vector2 wa, Vector2 wb, Vector2 wc)
-        {
-            var xsolutions = Equation.SolveQuadratic(wa.X, wb.X, wc.X);
-            var ysolutions = Equation.SolveQuadratic(wa.Y, wb.Y, wc.Y);
-            var solutions = xsolutions.Zip(ysolutions, (t1, t2) => (T1: t1, T2: t2));
-            return from solution in solutions
-                   where SolutionIsCorrect(solution.T1, solution.T2)
-                   select solution.T1;
-        }
-
-        private static bool SolutionIsCorrect(float t1, float t2) => t1 == t2 && Utils.CheckT(t1);
     }
 }
