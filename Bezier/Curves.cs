@@ -96,9 +96,29 @@ namespace Bezier
             return u3 * Weights[0] + 3 * u2 * t * Weights[1] + 3 * u * t2 * Weights[2] + t3 * Weights[3];
         }
 
-        public (ICurve, ICurve) Split(float z)
+        (ICurve, ICurve) ICurve.Split(float z) => Split(z);
+
+        public (CubicCurve, CubicCurve) Split(float z)
         {
-            throw new NotImplementedException();
+            float z2 = z * z;
+            float z3 = z2 * z;
+            float u = 1 - z;
+            float u2 = u * u;
+            float u3 = u2 * u;
+            float uzDoubled = 2 * u * z;
+            float u2zTripled = 3 * u2 * z;
+            float uz2Tripled = 3 * u * z2;
+            var a = new CubicCurve(
+                Weights[0],
+                u * Weights[0] + z * Weights[1],
+                u2 * Weights[0] + uzDoubled * Weights[1] + z2 * Weights[2],
+                u3 * Weights[0] + u2zTripled * Weights[1] + uz2Tripled * Weights[2] + z3 * Weights[3]);
+            var b = new CubicCurve(
+                u3 * Weights[0] + u2zTripled * Weights[1] + uz2Tripled * Weights[2] + z3 * Weights[3],
+                u2 * Weights[1] + uzDoubled * Weights[2] + z2 * Weights[3],
+                u * Weights[2] + z * Weights[3],
+                Weights[3]);
+            return (a, b);
         }
 
         ICurve ICurve.Derivative => Derivative;

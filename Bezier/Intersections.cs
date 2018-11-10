@@ -1,14 +1,19 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Bezier
 {
     static class IntersectionsExtension
     {
-        private static readonly float maximumSize = 0.001f;
+        private static readonly float maximumSize = 2.0f;
 
-        // This algorithm can be much faster
-        // It probably yields too many results
         public static IEnumerable<Vector2> Intersections(this ICurve a, ICurve b)
+        {
+            var intersections = FindIntersections(a, b);
+            return CleanIntersections(intersections);
+        }
+
+        private static IEnumerable<Vector2> FindIntersections(ICurve a, ICurve b)
         {
             Rectangle aBoundingBox = a.BoundingBox();
             Rectangle bBoundingBox = b.BoundingBox();
@@ -31,6 +36,19 @@ namespace Bezier
                         yield return intersection;
                     foreach (Vector2 intersection in a2.Intersections(b2))
                         yield return intersection;
+                }
+            }
+        }
+
+        private static IEnumerable<Vector2> CleanIntersections(IEnumerable<Vector2> intersections)
+        {
+            var cleanIntersections = new List<Vector2>();
+            foreach (Vector2 intersection in intersections)
+            {
+                if (!cleanIntersections.Any(i => i.SqrDistance(intersection) <= 70.0f))
+                {
+                    cleanIntersections.Add(intersection);
+                    yield return intersection;
                 }
             }
         }

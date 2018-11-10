@@ -45,7 +45,7 @@ namespace Bezier
 
         private IEnumerable<(int Index, float Distance)> SqrDistances(Vector2 fromPosition, float minimumDistance) =>
             from item in Utils.ValuesAndIndices(curve.Weights)
-            let sqrDistance = Vector2.SqrDistance(item.Value, fromPosition)
+            let sqrDistance = fromPosition.SqrDistance(item.Value)
             let sqrMinimumDistance = minimumDistance * minimumDistance
             where sqrDistance <= sqrMinimumDistance
             select (item.Index, sqrDistance);

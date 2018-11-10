@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -29,6 +30,8 @@ namespace Bezier
 
         public static void DrawIntersections(Canvas canvas, ICurve a, ICurve b)
         {
+            var intersections = a.Intersections(b).ToList();
+            Debug.WriteLine(intersections.Count);
             foreach (Vector2 intersection in a.Intersections(b))
                 DrawPointMarker(canvas, intersection, intersectionStroke, intersectionThickness);
         }
@@ -38,7 +41,7 @@ namespace Bezier
             DrawSkeleton(canvas, curve);
             DrawBoundingBox(canvas, curve);
             DrawCurve(canvas, curve, steps);
-            DrawSplit(canvas, curve, 0.3f, steps);
+            // DrawSplit(canvas, curve, 0.3f, steps);
             DrawWeights(canvas, curve);
             DrawExtrema(canvas, curve);
         }

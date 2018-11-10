@@ -63,7 +63,7 @@ namespace Bezier
 
         public Vector2(float x, float y) => (X, Y) = (x, y);
 
-        public static float SqrDistance(Vector2 a, Vector2 b) => (b - a).SqrMagnitude;
+        public float SqrDistance(Vector2 a) => (this - a).SqrMagnitude;
 
         public float SqrMagnitude => X * X + Y * Y;
 
@@ -88,6 +88,8 @@ namespace Bezier
         public static Vector2 operator *(Vector2 a, float n) => new Vector2(a.X * n, a.Y * n);
 
         public static Vector2 operator *(float n, Vector2 a) => a * n;
+
+        public static Vector2 operator /(Vector2 a, float n) => new Vector2(a.X / n, a.Y / n);
 
         public static bool operator ==(Vector2 a, Vector2 b) => a.X == b.X && a.Y == b.Y;
 
