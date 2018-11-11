@@ -7,9 +7,14 @@ namespace Bezier
 {
     public partial class MainWindow : Window
     {
-        private int steps = 0;
+        private int drawingSteps = 0;
         private readonly ICurve[] curves;
         private readonly WeightsController[] weightsControllers;
+
+        private bool drawExtrema = false;
+        private bool drawBoundingBoxes = false;
+        private bool drawIntersections = false;
+        private bool drawSkeletons = true;
 
         public MainWindow()
         {
@@ -24,7 +29,7 @@ namespace Bezier
                     new Vector2(420.0f, 450.0f)),
                 new CubicCurve(
                     new Vector2(110.0f, 410.0f),
-                    new Vector2(120.0f, 480.0f),
+                    new Vector2(150.0f, 400.0f),
                     new Vector2(120.0f, 600.0f),
                     new Vector2(200.0f, 500.0f)),
                 new QuadraticCurve(
@@ -39,22 +44,69 @@ namespace Bezier
             RedrawCanvas();
         }
 
+        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.E:
+                    drawExtrema = !drawExtrema;
+                    break;
+                case Key.B:
+                    drawBoundingBoxes = !drawBoundingBoxes;
+                    break;
+                case Key.I:
+                    drawIntersections = !drawIntersections;
+                    break;
+                case Key.S:
+                    drawSkeletons = !drawSkeletons;
+                    break;
+            }
+            RedrawCanvas();
+        }
+
         private void RedrawCanvas()
         {
-            Drawing.Clear(MainCanvas);
+            MainCanvas.Clear();
+            if (drawBoundingBoxes)
+                DrawBoundingBoxes();
+            if (drawSkeletons)
+                DrawSkeletons();
+            DrawWeights();
             DrawCurves();
-            try
-            {
+            if (drawExtrema)
+                DrawExtrema();
+            if (drawIntersections)
                 DrawIntersections();
-            }
-            catch (NotImplementedException)
-            { }
+        }
+
+        private void DrawBoundingBoxes()
+        {
+            foreach (var curve in curves)
+                MainCanvas.DrawBoundingBox(curve);
+        }
+
+        private void DrawSkeletons()
+        {
+            foreach (var curve in curves)
+                MainCanvas.DrawSkeleton(curve);
+        }
+
+        private void DrawWeights()
+        {
+            foreach (var curve in curves)
+                MainCanvas.DrawWeights(curve);
         }
 
         private void DrawCurves()
         {
             foreach (var curve in curves)
-                Drawing.DrawEverything(MainCanvas, curve, steps);
+                MainCanvas.DrawCurve(curve, drawingSteps);
+        }
+
+        private void DrawExtrema()
+        {
+            foreach (var curve in curves)
+                MainCanvas.DrawExtrema(curve);
         }
 
         private void DrawIntersections()
@@ -63,7 +115,14 @@ namespace Bezier
             foreach (var curve in curves)
             {
                 foreach (var otherCurve in curves.Skip(i))
-                    Drawing.DrawIntersections(MainCanvas, curve, otherCurve);
+                {
+                    try
+                    {
+                        MainCanvas.DrawIntersections(curve, otherCurve);
+                    }
+                    catch (NotImplementedException)
+                    { }
+                }
                 i += 1;
             }
         }
@@ -91,7 +150,7 @@ namespace Bezier
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            steps = (int)e.NewValue;
+            drawingSteps = (int)e.NewValue;
             if (IsInitialized)
                 RedrawCanvas();
         }
