@@ -1,0 +1,33 @@
+﻿<Window x:Class="Bezier.Options"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Bezier"
+        mc:Ignorable="d"
+        ResizeMode="CanMinimize"
+        Title="Options" Height="168" Width="251.817">
+    <Grid Margin="0,0,0,0">
+        <Grid.Resources>
+            <local:DrawingOptions x:Key="drawingOptions"/>
+        </Grid.Resources>
+        <Label Content="Precision:" Margin="10,10,0,0" Height="27" VerticalAlignment="Top" HorizontalAlignment="Left" Width="62"/>
+        <Slider x:Name="StepSlider"
+                HorizontalAlignment="Left"
+                Margin="77,14,0,0"
+                VerticalAlignment="Top"
+                Height="21"
+                Width="160"
+                Maximum="40"
+                LargeChange="9"
+                Minimum="3"
+                IsTabStop="False"
+                IsSelectionRangeEnabled="True"
+                SmallChange="5"
+                Value="{Binding Precision, Mode=TwoWay}"/>
+        <CheckBox Content="Draw extrema" HorizontalAlignment="Left" Margin="10,50,0,0" VerticalAlignment="Top" IsChecked="{Binding DrawExtrema, Mode=TwoWay}"/>
+        <CheckBox Content="Draw bounding boxes" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top" IsChecked="{Binding DrawBoundingBoxes, Mode=TwoWay}"/>
+        <CheckBox Content="Draw intersections" HorizontalAlignment="Left" Margin="10,90,0,0" VerticalAlignment="Top" IsChecked="{Binding DrawIntersections, Mode=TwoWay}"/>
+        <CheckBox Content="Draw skeletons" HorizontalAlignment="Left" Margin="10,110,0,0" VerticalAlignment="Top" IsChecked="{Binding DrawSkeletons, Mode=TwoWay}"/>
+    </Grid>
+</Window>

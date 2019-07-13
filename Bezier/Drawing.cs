@@ -85,11 +85,11 @@ namespace Bezier
             canvas.Children.Add(ellipse);
         }
 
-        public static void DrawCurve(this Canvas canvas, ICurve curve, int steps, Brush stroke = null, int? strokeThickness = null)
+        public static void DrawCurve(this Canvas canvas, ICurve curve, int precision, Brush stroke = null, int? strokeThickness = null)
         {
             stroke = stroke ?? curveStroke;
             int thickness = strokeThickness ?? curveThickness;
-            float delta = 1.0f / steps;
+            float delta = 1.0f / precision;
             Vector2 previousPoint = curve.Point(0.0f);
             for (float t = delta; t < 1.0f; t += delta)
             {

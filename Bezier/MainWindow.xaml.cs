@@ -1,20 +1,40 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 
 namespace Bezier
 {
+    public class DrawingOptions : INotifyPropertyChanged
+    {
+        private bool drawExtrema;
+        private bool drawBoundingBoxes;
+        private bool drawIntersections;
+        private bool drawSkeletons = true;
+        private int precision = 30;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged([CallerMemberName]string propertyName = "") => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        public bool DrawExtrema { get { return drawExtrema; } set { drawExtrema = value; OnPropertyChanged(); } }
+
+        public bool DrawBoundingBoxes { get { return drawBoundingBoxes; } set { drawBoundingBoxes = value; OnPropertyChanged(); } }
+
+        public bool DrawIntersections { get { return drawIntersections; } set { drawIntersections = value; OnPropertyChanged(); } }
+
+        public bool DrawSkeletons { get { return drawSkeletons; } set { drawSkeletons = value; OnPropertyChanged(); } }
+
+        public int Precision { get { return precision; } set { precision = value; OnPropertyChanged(); } }
+    }
+
     public partial class MainWindow : Window
     {
-        private int drawingSteps = 0;
         private readonly ICurve[] curves;
         private readonly WeightsController[] weightsControllers;
-
-        private bool drawExtrema = false;
-        private bool drawBoundingBoxes = false;
-        private bool drawIntersections = false;
-        private bool drawSkeletons = true;
+        private readonly DrawingOptions drawingOptions = new DrawingOptions();
 
         public MainWindow()
         {
@@ -41,41 +61,22 @@ namespace Bezier
                     new Vector2(510.0f, 160.0f))
             };
             weightsControllers = curves.Select(c => new WeightsController(c)).ToArray();
-            RedrawCanvas();
-        }
-
-        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.E:
-                    drawExtrema = !drawExtrema;
-                    break;
-                case Key.B:
-                    drawBoundingBoxes = !drawBoundingBoxes;
-                    break;
-                case Key.I:
-                    drawIntersections = !drawIntersections;
-                    break;
-                case Key.S:
-                    drawSkeletons = !drawSkeletons;
-                    break;
-            }
+            drawingOptions.PropertyChanged += (sender, eventArgs) => RedrawCanvas();
             RedrawCanvas();
         }
 
         private void RedrawCanvas()
         {
             MainCanvas.Clear();
-            if (drawBoundingBoxes)
+            if (drawingOptions.DrawBoundingBoxes)
                 DrawBoundingBoxes();
-            if (drawSkeletons)
+            if (drawingOptions.DrawSkeletons)
                 DrawSkeletons();
             DrawWeights();
             DrawCurves();
-            if (drawExtrema)
+            if (drawingOptions.DrawExtrema)
                 DrawExtrema();
-            if (drawIntersections)
+            if (drawingOptions.DrawIntersections)
                 DrawIntersections();
         }
 
@@ -100,7 +101,7 @@ namespace Bezier
         private void DrawCurves()
         {
             foreach (var curve in curves)
-                MainCanvas.DrawCurve(curve, drawingSteps);
+                MainCanvas.DrawCurve(curve, drawingOptions.Precision);
         }
 
         private void DrawExtrema()
@@ -121,7 +122,9 @@ namespace Bezier
                         MainCanvas.DrawIntersections(curve, otherCurve);
                     }
                     catch (NotImplementedException)
-                    { }
+                    {
+                        // Some of these haven't been implemented yet
+                    }
                 }
                 i += 1;
             }
@@ -148,11 +151,8 @@ namespace Bezier
             }
         }
 
-        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            drawingSteps = (int)e.NewValue;
-            if (IsInitialized)
-                RedrawCanvas();
-        }
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => drawingOptions.Precision = (int)e.NewValue;
+
+        private void Button_Click(object sender, RoutedEventArgs e) => new Options(drawingOptions).Show();
     }
 }

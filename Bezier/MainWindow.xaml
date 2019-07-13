@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Bezier"
         mc:Ignorable="d"
-        Title="MainWindow" Height="650" Width="800"
-        KeyDown="MainWindow_KeyDown">
+        Title="MainWindow" Height="650" Width="800">
     <Grid>
-        <Canvas x:Name="MainCanvas" Background="Transparent" HorizontalAlignment="Left" Height="619" VerticalAlignment="Top" Width="792" MouseMove="MainCanvas_MouseMove"/>
-        <Slider x:Name="StepSlider" HorizontalAlignment="Left" Margin="30,30,0,0" VerticalAlignment="Top" Height="21" Width="160" Maximum="40" LargeChange="9" Minimum="3" ValueChanged="Slider_ValueChanged" IsTabStop="False" IsSelectionRangeEnabled="True" Value="30" SmallChange="5"/>
+        <Canvas x:Name="MainCanvas" Background="Transparent" HorizontalAlignment="Left" Height="619" VerticalAlignment="Top" Width="792" MouseMove="MainCanvas_MouseMove">
+        </Canvas>
+        <Button Content="Options" Canvas.Left="238" Canvas.Top="29" Margin="710,10,10,580" Click="Button_Click"/>
     </Grid>
 </Window>
