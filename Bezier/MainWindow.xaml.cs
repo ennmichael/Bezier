@@ -153,6 +153,13 @@ namespace Bezier
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => drawingOptions.Precision = (int)e.NewValue;
 
-        private void Button_Click(object sender, RoutedEventArgs e) => new Options(drawingOptions).Show();
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var optionsWindow = new Options(drawingOptions)
+            {
+                Owner = this
+            };
+            optionsWindow.Show();
+        }
     }
 }
